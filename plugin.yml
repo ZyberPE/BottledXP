@@ -1,12 +1,12 @@
 name: BottledXP
 main: BottledXP\Main
-version: 1.0.0
+version: 1.0.1
 api: 5.0.0
 author: ZyberPE
 
 commands:
   xpbottle:
-    description: Convert XP levels into a bottle
+    description: Bottle your XP levels
     usage: "/xpbottle <amount>"
     aliases: [xpb]
     permission: bottledxp.use
