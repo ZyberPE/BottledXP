@@ -7,7 +7,7 @@ lore:
 
 messages:
   usage: "§cUsage: /xpbottle <amount>"
-  not-enough-xp: "§cYou don't have enough XP levels!"
-  invalid-amount: "§cInvalid amount."
-  success: "§aYou bottled §e{amount} §aXP levels!"
-  redeemed: "§aYou redeemed §e{amount} §aXP levels!"
+  invalid: "§cAmount must be greater than 0."
+  not-enough-xp: "§cYou do not have enough XP."
+  bottled: "§aYou bottled §e{amount} §aXP levels."
+  redeemed: "§aYou redeemed §e{amount} §aXP levels."
