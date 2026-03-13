@@ -5,9 +5,16 @@ lore:
   - "§7Bottled By: §e{player}"
   - "§aTap to redeem"
 
+# Maximum XP level a player can have
+max-levels: 10000
+
+sounds:
+  redeem: "random.orb"
+
 messages:
   usage: "§cUsage: /xpbottle <amount>"
   invalid: "§cAmount must be greater than 0."
-  not-enough-xp: "§cYou do not have enough XP."
+  not-enough-xp: "§cYou do not have enough XP levels."
   bottled: "§aYou bottled §e{amount} §aXP levels."
   redeemed: "§aYou redeemed §e{amount} §aXP levels."
+  max-level: "§cYou have reached the maximum XP level."
