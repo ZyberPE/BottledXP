@@ -1,0 +1,13 @@
+bottle-name: "§eXP Bottle"
+
+lore:
+  - "§7XP Amount: §a{amount}"
+  - "§7Bottled By: §e{player}"
+  - "§aTap to redeem"
+
+messages:
+  usage: "§cUsage: /xpbottle <amount>"
+  not-enough-xp: "§cYou don't have enough XP levels!"
+  invalid-amount: "§cInvalid amount."
+  success: "§aYou bottled §e{amount} §aXP levels!"
+  redeemed: "§aYou redeemed §e{amount} §aXP levels!"
