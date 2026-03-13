@@ -17,6 +17,8 @@ use pocketmine\item\Item;
 use pocketmine\event\entity\ProjectileLaunchEvent;
 use pocketmine\entity\projectile\ExperienceBottle;
 
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+
 class Main extends PluginBase implements Listener{
 
     private Config $config;
@@ -24,6 +26,7 @@ class Main extends PluginBase implements Listener{
     public function onEnable() : void{
         $this->saveDefaultConfig();
         $this->config = $this->getConfig();
+
         $this->getServer()->getPluginManager()->registerEvents($this,$this);
     }
 
@@ -111,12 +114,44 @@ class Main extends PluginBase implements Listener{
 
         $amount = $item->getNamedTag()->getInt("xp_amount");
 
-        $owner->getXpManager()->addXpLevels($amount);
+        $xpManager = $owner->getXpManager();
+
+        $currentLevel = $xpManager->getXpLevel();
+        $maxLevel = $this->config->get("max-levels");
+
+        if($currentLevel >= $maxLevel){
+            $owner->sendMessage($this->config->getNested("messages.max-level"));
+            return;
+        }
+
+        $newLevel = $currentLevel + $amount;
+
+        if($newLevel > $maxLevel){
+            $amount = $maxLevel - $currentLevel;
+        }
+
+        $xpManager->setXpLevel($currentLevel + $amount);
 
         $item->setCount($item->getCount() - 1);
         $owner->getInventory()->setItemInHand($item);
 
         $msg = str_replace("{amount}",$amount,$this->config->getNested("messages.redeemed"));
         $owner->sendMessage($msg);
+
+        $this->playSound($owner,$this->config->getNested("sounds.redeem"));
+    }
+
+    private function playSound(Player $player,string $sound) : void{
+
+        $pk = new PlaySoundPacket();
+
+        $pk->soundName = $sound;
+        $pk->x = $player->getPosition()->getX();
+        $pk->y = $player->getPosition()->getY();
+        $pk->z = $player->getPosition()->getZ();
+        $pk->volume = 1;
+        $pk->pitch = 1;
+
+        $player->getNetworkSession()->sendDataPacket($pk);
     }
 }
