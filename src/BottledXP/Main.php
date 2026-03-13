@@ -14,7 +14,8 @@ use pocketmine\player\Player;
 use pocketmine\item\VanillaItems;
 use pocketmine\item\Item;
 
-use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\entity\ProjectileLaunchEvent;
+use pocketmine\entity\projectile\ExperienceBottle;
 
 class Main extends PluginBase implements Listener{
 
@@ -23,7 +24,6 @@ class Main extends PluginBase implements Listener{
     public function onEnable() : void{
         $this->saveDefaultConfig();
         $this->config = $this->getConfig();
-
         $this->getServer()->getPluginManager()->registerEvents($this,$this);
     }
 
@@ -68,8 +68,7 @@ class Main extends PluginBase implements Listener{
 
         $item = VanillaItems::EXPERIENCE_BOTTLE();
 
-        $name = $this->config->get("bottle-name");
-        $item->setCustomName($name);
+        $item->setCustomName($this->config->get("bottle-name"));
 
         $lore = [];
 
@@ -83,34 +82,41 @@ class Main extends PluginBase implements Listener{
 
         $tag = $item->getNamedTag();
         $tag->setInt("xp_amount",$amount);
-
         $item->setNamedTag($tag);
 
         return $item;
     }
 
-    public function onInteract(PlayerInteractEvent $event) : void{
+    public function onBottleThrow(ProjectileLaunchEvent $event) : void{
 
-        $player = $event->getPlayer();
-        $item = $event->getItem();
+        $entity = $event->getEntity();
 
-        $tag = $item->getNamedTag();
+        if(!$entity instanceof ExperienceBottle){
+            return;
+        }
 
-        if(!$tag->getTag("xp_amount")){
+        $owner = $entity->getOwningEntity();
+
+        if(!$owner instanceof Player){
+            return;
+        }
+
+        $item = $owner->getInventory()->getItemInHand();
+
+        if(!$item->getNamedTag()->getTag("xp_amount")){
             return;
         }
 
         $event->cancel();
 
-        $amount = $tag->getInt("xp_amount");
+        $amount = $item->getNamedTag()->getInt("xp_amount");
 
-        $player->getXpManager()->addXpLevels($amount);
+        $owner->getXpManager()->addXpLevels($amount);
 
         $item->setCount($item->getCount() - 1);
-
-        $player->getInventory()->setItemInHand($item);
+        $owner->getInventory()->setItemInHand($item);
 
         $msg = str_replace("{amount}",$amount,$this->config->getNested("messages.redeemed"));
-        $player->sendMessage($msg);
+        $owner->sendMessage($msg);
     }
 }
